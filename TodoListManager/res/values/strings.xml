@@ -3,6 +3,14 @@
 
     <string name="app_name">Todo List App</string>
     <string name="action_add">Add</string>
-    <string name="action_del">Delete</string>
+    <string name="action_del">Delete Item</string>
+    <string name="action_call">Call</string>
+    <string name="noDueDate">No due date</string>
+    <string name="title">title</string>
+    <string name="dueDate">dueDate</string>
+    <string name="cancelBtn">Cancel</string>
+    <string name="okBtn">OK</string>
+    <string name="AddNewTodoItemActivityName">Add New Item</string>
+    <string name="newItemHint">What do you need to do?</string>
 
 </resources>
