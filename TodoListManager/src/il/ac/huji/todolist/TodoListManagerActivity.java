@@ -1,18 +1,32 @@
 package il.ac.huji.todolist;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 public class TodoListManagerActivity extends Activity {
+
+	private static final int ADD_NEW_TODO_ITEM_REQ_CODE = 3333;
+
+	private static final String CALL_STRING = "Call ";
+
+	private static final CharSequence TELL_STRING = "tel:";
 
 	private ListView todoList;
 	private ArrayAdapter<TodoListItem> todoListAdapter;
@@ -28,6 +42,53 @@ public class TodoListManagerActivity extends Activity {
 
 		todoList.setAdapter(todoListAdapter);
 
+		registerForContextMenu(todoList);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		getMenuInflater().inflate(R.menu.contex_menu, menu);
+		
+		AdapterContextMenuInfo ctxMenuInfo = (AdapterContextMenuInfo) menuInfo;
+		
+		TextView titleView = (TextView) ctxMenuInfo.targetView.findViewById(R.id.txtTodoTitle);
+		String title = titleView.getText().toString();
+		
+		MenuItem call = menu.findItem(R.id.menuItemCall);
+		
+		menu.setHeaderTitle(title);
+		
+		if (title.startsWith(CALL_STRING)) {
+	        call.setTitle(title);
+			return;
+		}
+		
+		menu.removeItem(R.id.menuItemCall);
+		
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		TodoListItem listItem = (TodoListItem) todoList.getItemAtPosition(info.position);
+		switch(item.getItemId()) {
+
+		case R.id.menuItemDelete:
+			todoListAdapter.remove(listItem);
+			break;
+
+		case R.id.menuItemCall:
+			
+			String phoneNumber = listItem.getTitle().replace(CALL_STRING, TELL_STRING);
+			
+			Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse(phoneNumber));
+			startActivity(dialIntent);
+			break;
+			
+		}
+
+		return true;
 	}
 
 	@Override
@@ -44,14 +105,8 @@ public class TodoListManagerActivity extends Activity {
 
 		case R.id.menuItemAdd:
 
-			EditText todoItem = (EditText) findViewById(R.id.edtNewItem);
-			todoListAdapter.add(new TodoListItem(todoItem.getText().toString()));
-			todoItem.setText("");
-			return true;
-
-		case R.id.menuItemDelete:
-
-			todoListAdapter.remove((TodoListItem) todoList.getSelectedItem());
+			Intent intent = new Intent(this, AddNewTodoItemActivity.class);
+			startActivityForResult(intent, ADD_NEW_TODO_ITEM_REQ_CODE);
 
 			return true;
 
@@ -59,6 +114,28 @@ public class TodoListManagerActivity extends Activity {
 
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		final Resources res = getResources();
+
+		switch(requestCode) {
+
+		case ADD_NEW_TODO_ITEM_REQ_CODE:
+			//You said that it is possible to get no date..
+			if (resultCode == RESULT_OK && data.hasExtra(res.getString(R.string.title))) {
+				Date dueDate = null;
+				if (data.getSerializableExtra(res.getString(R.string.dueDate)) != null) {
+					dueDate = (Date) data.getSerializableExtra(res.getString(R.string.dueDate));
+				}
+				todoListAdapter.add(new TodoListItem(data.getStringExtra(res.getString(R.string.title)), 
+						dueDate));
+			}
+			break;
+
+		}
 	}
 
 }

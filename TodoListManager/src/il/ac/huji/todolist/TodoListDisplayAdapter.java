@@ -1,5 +1,6 @@
 package il.ac.huji.todolist;
 
+import java.util.Date;
 import java.util.List;
 
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class TodoListDisplayAdapter extends ArrayAdapter<TodoListItem> {
+
 	public TodoListDisplayAdapter(TodoListManagerActivity activity, List<TodoListItem> todos) {
 		super(activity, android.R.layout.simple_list_item_1, todos);
 	}
@@ -17,14 +19,31 @@ public class TodoListDisplayAdapter extends ArrayAdapter<TodoListItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TodoListItem todos = getItem(position);
-		int color = ((position % 2) == 0) ? Color.RED : Color.BLUE;
 		
 		LayoutInflater inflater = LayoutInflater.from(getContext());
 		View view = inflater.inflate(R.layout.row, null);
-		TextView txtName = (TextView)view.findViewById(R.id.todoItem);
+		TextView txtTitle = (TextView)view.findViewById(R.id.txtTodoTitle);
+		TextView txtDueDate = (TextView)view.findViewById(R.id.txtTodoDueDate);
 		
-		txtName.setText(todos.getTask());
-		txtName.setTextColor(color);
+		
+		txtTitle.setText(todos.getTitle());
+		txtTitle.setTextColor(Color.BLACK);
+		
+		String dueDate = todos.dueDateToString();
+		
+		if (dueDate != null) {
+			txtDueDate.setText(dueDate);
+			
+			Date now = new Date();
+			if (todos.getDueDate().before(now)) {
+				txtTitle.setTextColor(Color.RED);
+				txtDueDate.setTextColor(Color.RED);
+			}
+			else{
+				txtDueDate.setTextColor(Color.BLACK);
+			}
+		}
+		
 		return view;
 	}
 }
