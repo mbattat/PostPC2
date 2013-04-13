@@ -29,20 +29,26 @@ public class TodoListManagerActivity extends Activity {
 	private static final CharSequence TELL_STRING = "tel:";
 
 	private ListView todoList;
-	private ArrayAdapter<TodoListItem> todoListAdapter;
-	private List<TodoListItem> todos = new ArrayList<TodoListItem>();
+	private ArrayAdapter<ITodoItem> todoListAdapter;
+	private List<ITodoItem> todos = new ArrayList<ITodoItem>();
+	
+	private TodoDAL todoDAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
-
+		
 		todoList = (ListView) findViewById(R.id.lstTodoItems);
 		todoListAdapter = new TodoListDisplayAdapter(this, todos);
 
 		todoList.setAdapter(todoListAdapter);
 
 		registerForContextMenu(todoList);
+		
+		//Initialize the DB access class and populate items from previous sessions. 
+		todoDAL = new TodoDAL(this);
+		todos.addAll(todoDAL.all());
 	}
 
 	@Override

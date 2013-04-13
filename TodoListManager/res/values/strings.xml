@@ -12,5 +12,9 @@
     <string name="okBtn">OK</string>
     <string name="AddNewTodoItemActivityName">Add New Item</string>
     <string name="newItemHint">What do you need to do?</string>
+    
+    <!-- Parse application keys. -->
+    <string name="parseApplication">rkPUQUzT4J49Ssk71IE9sMp1C8EziTTdzXIER5R0</string>
+    <string name="clientKey">OJusJnZ3D7bjG3dYOYEBH5Z6mSDWjXJhfTYTG27W</string>
 
 </resources>

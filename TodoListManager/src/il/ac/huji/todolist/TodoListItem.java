@@ -4,15 +4,17 @@ import android.annotation.SuppressLint;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TodoListItem {
+public class TodoListItem implements ITodoItem{
 	
 	private static final String FORMAT = "dd/MM/yyyy";
 	private String _txtTodoTitle;
-	private Date _txtTodoDueDate;
+	private Date _txtTodoDueDate = null;
 	
 	public TodoListItem(String txtTodoTitle, Date date) {
 		this._txtTodoTitle = txtTodoTitle;
-		this._txtTodoDueDate = date;
+		if (date instanceof Date) {
+			this._txtTodoDueDate = date;
+		}
 	}
 
 	public String getTitle() {
