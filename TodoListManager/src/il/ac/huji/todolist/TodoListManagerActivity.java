@@ -39,6 +39,10 @@ public class TodoListManagerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_list_manager);
 		
+		//Initialize the DB access class and populate items from previous sessions. 
+		todoDAL = new TodoDAL(this);
+		todos.addAll(todoDAL.all());
+		
 		todoList = (ListView) findViewById(R.id.lstTodoItems);
 		todoListAdapter = new TodoListDisplayAdapter(this, todos);
 
@@ -46,9 +50,19 @@ public class TodoListManagerActivity extends Activity {
 
 		registerForContextMenu(todoList);
 		
-		//Initialize the DB access class and populate items from previous sessions. 
-		todoDAL = new TodoDAL(this);
-		todos.addAll(todoDAL.all());
+		int a = 5; // my update tests
+		List<ITodoItem> list = todoDAL.all();
+		System.out.println("----list at start:");
+		for (ITodoItem i:list) System.out.println(i.getTitle() + ":" + i.getDueDate().toGMTString());
+		
+		todoDAL.insert(new TodoListItem("my 1", new Date(2013, 10, 22)));
+		todoDAL.insert(new TodoListItem("my 2", new Date(2013, 10, 25)));
+		todoDAL.update(new TodoListItem("my 2", new Date(2013, 10, 22)));
+		todoDAL.update(new TodoListItem("my 3", new Date(2013, 10, 23)));
+		todoDAL.delete(new TodoListItem("my 3", null));
+		System.out.println("----list at end:");
+		list = todoDAL.all();
+		for (ITodoItem i:list) System.out.println(i.getTitle() + ":" + i.getDueDate().toGMTString());
 	}
 
 	@Override
@@ -81,6 +95,7 @@ public class TodoListManagerActivity extends Activity {
 		switch(item.getItemId()) {
 
 		case R.id.menuItemDelete:
+			todoDAL.delete(listItem);
 			todoListAdapter.remove(listItem);
 			break;
 
@@ -136,14 +151,13 @@ public class TodoListManagerActivity extends Activity {
 				if (data.getSerializableExtra(res.getString(R.string.dueDate)) != null) {
 					dueDate = (Date) data.getSerializableExtra(res.getString(R.string.dueDate));
 				}
-				todoListAdapter.add(new TodoListItem(data.getStringExtra(res.getString(R.string.title)), 
-						dueDate));
+				TodoListItem newTodo = new TodoListItem(data.getStringExtra(res.getString(R.string.title)),	dueDate);
+				if (todoDAL.insert(newTodo)) { todoListAdapter.add(newTodo); }
 			}
 			break;
 
 		}
 	}
-
 }
 
 

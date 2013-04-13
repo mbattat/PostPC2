@@ -208,7 +208,7 @@ public class TodoDAL {
 				} while (cursor.moveToNext());
 				
 			}
-
+			cursor.close();
 			_db.close();
 
 		}
