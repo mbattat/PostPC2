@@ -49,20 +49,6 @@ public class TodoListManagerActivity extends Activity {
 		todoList.setAdapter(todoListAdapter);
 
 		registerForContextMenu(todoList);
-		
-		int a = 5; // my update tests
-		List<ITodoItem> list = todoDAL.all();
-		System.out.println("----list at start:");
-		for (ITodoItem i:list) System.out.println(i.getTitle() + ":" + i.getDueDate().toGMTString());
-		
-		todoDAL.insert(new TodoListItem("my 1", new Date(2013, 10, 22)));
-		todoDAL.insert(new TodoListItem("my 2", new Date(2013, 10, 25)));
-		todoDAL.update(new TodoListItem("my 2", new Date(2013, 10, 22)));
-		todoDAL.update(new TodoListItem("my 3", new Date(2013, 10, 23)));
-		todoDAL.delete(new TodoListItem("my 3", null));
-		System.out.println("----list at end:");
-		list = todoDAL.all();
-		for (ITodoItem i:list) System.out.println(i.getTitle() + ":" + i.getDueDate().toGMTString());
 	}
 
 	@Override
